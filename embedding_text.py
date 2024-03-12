@@ -1,35 +1,27 @@
 """
 This python file is used to embed the text using pre-trained word embeddings.
 """
-
-from sentence_transformers import SentenceTransformer, util
+import os
 import numpy as np
+import openai
+from openai import OpenAI
+import pandas as pd
 
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+client = OpenAI()
+use_model = "text-embedding-3-small"
 
 # Two lists of sentences
-sentences1 = [
+text = [
     "The cat sits outside",
     "A man is playing guitar",
     "The new movie is awesome",
 ]
 
-sentences2 = [
-    "The dog plays in the garden",
-    "A woman watches TV",
-    "The new movie is so great",
-]
+def get_embedding(text, model=use_model):
+    text = text.replace("\n", " ")
+    return client.embeddings.create(input = [text], model = model).data[0].embedding
 
-# Compute embedding for both lists
-embeddings1 = model.encode(sentences1, convert_to_tensor=True)
-embeddings2 = model.encode(sentences2, convert_to_tensor=True)
-
-# Compute cosine-similarities
-cosine_scores = util.cos_sim(embeddings1, embeddings2)
-
-# Output the pairs with their score
-for i in range(len(sentences1)):
-    print("{} \t\t {} \t\t Score: {:.4f}".format(
-        sentences1[i], sentences2[i], cosine_scores[i][i]
-    ))
+df = pd.DataFrame({'combined': text})
+df['my_embedding'] = df.combined.apply(lambda x: get_embedding(x, model='text-embedding-3-small'))
