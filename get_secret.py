@@ -9,8 +9,8 @@ from botocore.exceptions import ClientError
 
 def get_secret():
 
-    secret_name = "OpenaiApiKey03"
-    region_name = "us-east-1"
+    secret_name = "openai_api"
+    region_name = "us-east-2"
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -29,5 +29,5 @@ def get_secret():
         raise e
 
     secret = get_secret_value_response['SecretString']
-
+    return secret
     # Your code goes here.
