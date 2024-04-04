@@ -25,7 +25,7 @@ for filename in tqdm(os.listdir("rawtext")):
     # remove the file extension
     essay_id = filename.split(".")[0]
     # open each file and search for example sentences
-    with open("test/" + filename, "r") as file:
+    with open("rawtext/" + filename, "r") as file:
         essay = json.load(file)
         example_sentences = find_sentences_with_keywords(essay, example_keywords)
         # add the search results to the dataframe, ignore index
