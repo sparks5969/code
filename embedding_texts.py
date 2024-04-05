@@ -1,10 +1,10 @@
 import pandas as pd
-import boto3
 import json
-import os
 import numpy as np
 import openai
 from openai import OpenAI
+import os
+import boto3
 from get_secret import get_secret
 from tqdm import tqdm
 from sklearn.metrics.pairwise import cosine_similarity
