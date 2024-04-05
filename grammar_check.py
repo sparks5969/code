@@ -20,7 +20,7 @@ client = OpenAI()
 
 def check_grammar(system_message, sentence):
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4-0125-preview",
         messages=[
             {
                 "role": "system",
@@ -45,11 +45,13 @@ grammar_check_result = pd.DataFrame(columns=["essay_id", "sentence", "incorrect"
 issue_files = []
 # loop through the rawtext folder to check grammar
 # load the essay
+
+# take two essays as an example
 for file in tqdm(os.listdir("rawtext")):
     print(f'now processing file {file}')
     try:
-        with open("rawtext/essay1.json" , "r") as file:
-            essay = json.load(file)
+        with open("rawtext/essay1.json" , "r") as f:
+            essay = json.load(f)
             # remove the extension of the file
             essay_id = file.split(".")[0]
             for sentence in tqdm(essay):
@@ -63,6 +65,11 @@ for file in tqdm(os.listdir("rawtext")):
         issue_files.append(file)
         continue
 
+# export the result to a csv file
+grammar_check_result.to_csv("grammar_check_result.csv", index=False)  
 
-
-
+# export the issue file to a txt file
+with open("issue_files.txt", "w") as f:
+    for file in issue_files:
+        f.write(file)
+        f.write("\n")
