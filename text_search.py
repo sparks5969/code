@@ -1,3 +1,8 @@
+"""
+This script is designed to search sentences containing keywords in the essays.
+I'm particularly interested in finding sentences that provide examples in the essays.
+"""
+
 from fuzzywuzzy import fuzz
 import pandas as pd
 import os
@@ -8,14 +13,14 @@ def find_sentences_with_keywords(sentences, example_keywords, threshold=80):
     example_sentences = []
     for sentence in sentences:
         for keyword in example_keywords:
-            if fuzz.partial_ratio(keyword, sentence.lower()) >= threshold:
+            if (fuzz.partial_ratio(keyword, sentence.lower()) >= threshold) & (len(sentence.split()) > 5):
                 example_sentences.append(sentence)
                 break
     return example_sentences
 
 
 # keywords to search for
-example_keywords = ["for example", "for instance", "an example of", "illustrate", "example", "such as"]
+example_keywords = ["for example", "for instance", "an example of", "illustrate", "example", "such as", "consider the case of"]
 
 # create a dataframe to store search results. # first column: essay_id, second column: example_sentences
 example_sentences_df = pd.DataFrame(columns=["essay_id", "example sentences"])

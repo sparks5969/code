@@ -55,6 +55,9 @@ for file in tqdm(os.listdir("rawtext")):
             # remove the extension of the file
             essay_id = file.split(".")[0]
             for sentence in tqdm(essay):
+                # if the sentence is too short, skip it
+                if len(sentence.split()) < 5:
+                    continue
                 incorrect = check_grammar(system_message, sentence)
                 new_row = pd.DataFrame({"essay_id": essay_id,
                                         "sentence": [sentence], 
