@@ -38,19 +38,26 @@ def check_grammar(system_message, sentence):
     return response.choices[0].message
 
 
-system_message = "You will judge if the given sentence is grammatically correct. ignore letter case, ignore minor issues. parsing the sentence when necessary. If correct, return 0, if incorrect, retrun 1"
+system_message = """You will rate the quality of given sentences.
+Please rate the quality of the following sentences on continuous scale of 0 to 1.
+If a sentence is perfectly written, please rate it as 1.
+if a sentence is poorly written, please rate it as 0.
+if a sentence is somewhere in between, please rate it as a decimal between 0 and 1.
+ignore letter case.
+parsing the sentence when necessary. """
 
 # create a dataframe store the result.
-grammar_check_result = pd.DataFrame(columns=["essay_id", "sentence", "incorrect"])  
+grammar_check_result = pd.DataFrame(columns=["essay_id", "sentence", "quality_rating"])  
 issue_files = []
 # loop through the rawtext folder to check grammar
 # load the essay
 
-# take two essays as an example
-for file in tqdm(os.listdir("rawtext")):
+file_list = os.listdir("rawtext")
+
+for file in tqdm(file_list):
     print(f'now processing file {file}')
     try:
-        with open("rawtext/essay1.json" , "r") as f:
+        with open("rawtext/" + file , "r") as f:
             essay = json.load(f)
             # remove the extension of the file
             essay_id = file.split(".")[0]
@@ -58,10 +65,10 @@ for file in tqdm(os.listdir("rawtext")):
                 # if the sentence is too short, skip it
                 if len(sentence.split()) < 5:
                     continue
-                incorrect = check_grammar(system_message, sentence)
+                quality_rating = check_grammar(system_message, sentence)
                 new_row = pd.DataFrame({"essay_id": essay_id,
                                         "sentence": [sentence], 
-                                        "incorrect": incorrect.content})
+                                        "quality_rating": quality_rating.content})
                 grammar_check_result = pd.concat([grammar_check_result, new_row], ignore_index=True)
     except Exception as e:
         print(f"Error processing file {file}")
